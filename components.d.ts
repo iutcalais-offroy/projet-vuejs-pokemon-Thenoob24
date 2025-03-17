@@ -16,6 +16,7 @@ declare module 'vue' {
     NDataTable: typeof import('naive-ui')['NDataTable']
     NDescriptions: typeof import('naive-ui')['NDescriptions']
     NDescriptionsItem: typeof import('naive-ui')['NDescriptionsItem']
+    NDynamicInput: typeof import('naive-ui')['NDynamicInput']
     NEmpty: typeof import('naive-ui')['NEmpty']
     NFlex: typeof import('naive-ui')['NFlex']
     NForm: typeof import('naive-ui')['NForm']
@@ -43,6 +44,7 @@ declare module 'vue' {
     'Register.component': typeof import('./src/components/Register.component.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    'SearchInput.component': typeof import('./src/components/SearchInput.component.vue')['default']
     'SignIn.component': typeof import('./src/components/SignIn.component.vue')['default']
   }
 }

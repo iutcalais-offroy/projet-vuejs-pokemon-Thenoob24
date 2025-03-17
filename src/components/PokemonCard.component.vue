@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { defineProps } from 'vue';
-import { NCard, NSpace, NTag, NDescriptions, NDescriptionsItem, NIcon } from 'naive-ui';
+import { NCard, NSpace, NTag, NDescriptions, NDescriptionsItem, NIcon, NButton } from 'naive-ui';
 import { HeartOutline, ScaleOutline, BarbellOutline } from '@vicons/ionicons5';
+import { usePokemonCardStore } from '../store/PokemonCard.store';
 
 const props = defineProps<{
   pokemon: {
@@ -16,7 +17,10 @@ const props = defineProps<{
     height: number,
     weight: number,
   },
+  isDeckCard?: boolean,
 }>();
+
+const store = usePokemonCardStore();
 
 const cardColor = computed(() => {
   switch (props.pokemon.type.name.toLowerCase()) {
@@ -61,10 +65,28 @@ const tagBorderColor = computed(() => {
       return 'black';
   }
 });
+
+onMounted(() => {
+  store.fetchAttackDetails(props.pokemon.attackId);
+});
+
+const attackDetails = computed(() => store.attackDetails[props.pokemon.attackId]);
+
+const addToDeck = () => {
+  store.addToDeck(props.pokemon);
+};
+
+const removeFromDeck = () => {
+  store.removeFromDeck(props.pokemon);
+};
+
+const handleDragStart = (event: DragEvent) => {
+  event.dataTransfer?.setData('pokemon', JSON.stringify(props.pokemon));
+};
 </script>
 
 <template>
-  <n-card :title="pokemon.name" :style="{ width: '300px', margin: '10px', backgroundColor: cardColor, borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', height: '500px' }">
+  <n-card :title="pokemon.name" :style="{ width: '300px', margin: '10px', backgroundColor: cardColor, borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', height: '500px', position: 'relative' }" draggable="true" @dragstart="handleDragStart">
     <template #cover>
       <div style="border: 2px solid black; background-color: white; padding: 5px; border-radius: 10px; width: 90%; margin: 0 auto;">
         <img :src="pokemon.imageUrl" alt="pokemon image" style="width: 100%; height: auto; border-radius: 10px;">
@@ -82,8 +104,12 @@ const tagBorderColor = computed(() => {
         <n-descriptions-item label="Weight">
           <n-icon><BarbellOutline /></n-icon> {{ pokemon.weight }} kg
         </n-descriptions-item>
+        <n-descriptions-item v-if="attackDetails" label="Attack">
+          {{ attackDetails.name }} ({{ attackDetails.type }}) - {{ attackDetails.damages }} damage
+        </n-descriptions-item>
       </n-descriptions>
     </n-space>
+    <n-button v-if="isDeckCard" @click="removeFromDeck" style="position: absolute; top: 10px; right: 10px;">X</n-button>
   </n-card>
 </template>
 
