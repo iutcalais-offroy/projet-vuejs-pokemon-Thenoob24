@@ -9,30 +9,49 @@ const apiClient = axios.create({
 });
 
 export const getPokemons = async () => {
-    const response: any = await apiClient.get("pokemon-cards");
-    console.log(response.data)
-    return response.data;
+    try {
+        const response: any = await apiClient.get("pokemon-cards");
+        console.log(response.data)
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching pokemons:', error.response ? error.response.data : error.message);
+        console.error('Error details:', error.response ? error.response : error);
+        throw error;
+    }
 }
 
 export const getPokemon = async (id: string) => {
-    const response: any = await apiClient.get(`pokemon-cards/${id}`);
-    console.log(response.data)
-    return response.data;
+    try {
+        const response: any = await apiClient.get(`pokemon-cards/${id}`);
+        console.log(response.data)
+        return response.data;
+    } catch (error) {
+        console.error(`Error fetching pokemon with id ${id}:`, error.response ? error.response.data : error.message);
+        console.error('Error details:', error.response ? error.response : error);
+        throw error;
+    }
 }
 
 export const getAttack = async (attackId: number) => {
-    const response: any = await apiClient.get(`attacks/${attackId}`);
-    console.log(response.data)
-    return response.data;
+    try {
+        const response: any = await apiClient.get(`attacks/${attackId}`);
+        console.log(response.data)
+        return response.data;
+    } catch (error) {
+        console.error(`Error fetching attack with id ${attackId}:`, error.response ? error.response.data : error.message);
+        console.error('Error details:', error.response ? error.response : error);
+        throw error;
+    }
 }
 
-export const createDeck = async (name: string, cards: number[]) => {
+export const createDeck = async (name: string, cards:any []) => {
     try {
         const response: any = await apiClient.post("decks", { name, cards });
         console.log(response.data)
         return response.data;
     } catch (error) {
         console.error('Error creating deck:', error.response ? error.response.data : error.message);
+        console.error('Error details:', error.response ? error.response : error);
         throw error;
     }
 }

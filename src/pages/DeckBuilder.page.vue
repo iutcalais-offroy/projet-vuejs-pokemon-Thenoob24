@@ -3,7 +3,7 @@ import { ref, watch } from 'vue';
 import PokemonCard from "../components/PokemonCard.component.vue";
 import { usePokemonCardStore } from "../store/PokemonCard.store.ts";
 import { storeToRefs } from "pinia";
-import { NModal, NButton, useMessage } from 'naive-ui';
+import { NModal, NButton } from 'naive-ui';
 
 const PokemonCardStore = usePokemonCardStore();
 const { filteredPokemons, deck } = storeToRefs(PokemonCardStore);
@@ -43,12 +43,11 @@ const handleDragLeave = (event: DragEvent) => {
 };
 
 const saveDeck = async () => {
-  const message = useMessage();
   try {
     await PokemonCardStore.saveDeck(deckName.value);
-    message.success('Deck saved successfully!');
+    console.log('Deck saved successfully!');
   } catch (error) {
-    message.error('Failed to save deck. Please try again.');
+    console.error('Failed to save deck. Please try again.');
   }
 };
 </script>
@@ -62,7 +61,7 @@ const saveDeck = async () => {
   </div>
   <div style="display: flex; flex-direction: column; align-items: center;">
     <h1>Deck</h1>
-    <div style="display: flex; flex-wrap: wrap; justify-content: center; border: 2px dashed #ccc; padding: 20px; min-height: 200px; width: 80%; transition: all 0.3s; position: relative;" @drop="handleDrop" @dragover="handleDragOver" @dragleave="handleDragLeave">
+    <div style="display: flex; flex-wrap; wrap; justify-content: center; border: 2px dashed #ccc; padding: 20px; min-height: 200px; width: 80%; transition: all 0.3s; position: relative;" @drop="handleDrop" @dragover="handleDragOver" @dragleave="handleDragLeave">
       <div v-if="showPlusSymbol" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2em; color: #ccc;">+</div>
       <div v-for="pokemon in deck" :key="pokemon.id" style="margin: 10px;">
         <PokemonCard :pokemon="pokemon" :isDeckCard="true"/>
@@ -73,8 +72,8 @@ const saveDeck = async () => {
     <h1>Liste des Pokemons</h1>
     <n-input v-model:value="searchQuery" placeholder="Search for a Pokemon" style="width: 1000px;" />
   </div>
-  <div style="display: flex; flex-wrap; justify-content: center;">
-    <div v-for="pokemon in filteredPokemons" :key="pokemon.id" style="margin: 10px;">
+  <div class="pokemon-grid">
+    <div v-for="pokemon in filteredPokemons" :key="pokemon.id" class="pokemon-card">
       <PokemonCard :pokemon="pokemon"/>
     </div>
   </div>
@@ -83,7 +82,18 @@ const saveDeck = async () => {
     <div style="display: flex; flex-wrap; justify-content: center;">
       <div v-for="pokemon in deck" :key="pokemon.id" style="margin: 10px;">
         <PokemonCard :pokemon="pokemon" :isDeckCard="true"/>
+      </div>
+    </div>
+  </n-modal>
+</template>
 
 <style scoped>
-/* Add any necessary styles here */
+.pokemon-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+.pokemon-card {
+  margin: 10px;
+}
 </style>

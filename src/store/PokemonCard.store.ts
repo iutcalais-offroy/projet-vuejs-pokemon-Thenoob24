@@ -1,14 +1,12 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { getPokemons, getPokemon, getAttack, createDeck } from '../api/PokemonCard.api';
-import { useMessage } from 'naive-ui';
 
 export const usePokemonCardStore = defineStore('PokemonCardStore', () => {
     const PokemonGenerated: any = ref([]);
     const filteredPokemons: any = ref([]);
     const attackDetails: any = ref({});
     const deck: any = ref([]);
-    const message = useMessage();
 
     const generatePokemons = async () => {
         const result = await getPokemons();
@@ -57,13 +55,22 @@ export const usePokemonCardStore = defineStore('PokemonCardStore', () => {
 
     const saveDeck = async (name: string) => {
         try {
-            const cardIds = deck.value.map((pokemon: any) => pokemon.id);
-            const result = await createDeck(name, cardIds);
-            message.success('Deck saved successfully!');
+            const cards = deck.value.map((pokemon: any) => ({
+                id: pokemon.id,
+                name: pokemon.name,
+                pokedexId: pokemon.pokedexId,
+                typeId: pokemon.type.id,
+                lifePoints: pokemon.lifePoints,
+                imageUrl: pokemon.imageUrl,
+                height: pokemon.height,
+                weight: pokemon.weight,
+                attackId: pokemon.attackId,
+                weaknessId: pokemon.weaknessId
+            }));
+            const result = await createDeck(name, cards);
             console.log(result);
             return result;
         } catch (error) {
-            message.error('Failed to save deck. Please try again.');
             console.error('Error saving deck:', error);
         }
     };
